@@ -13,9 +13,15 @@ check_ssl_expiry() {
 # Iterate through domains provided as arguments
 for domain in "$@"
 do
-    remaining_days=$(check_ssl_expiry $domain)
+    echo "Checking domain: $domain"
+    expiry_info=$(check_ssl_expiry $domain)
+    remaining_days=$(echo $expiry_info | cut -d ',' -f 1)
+    expiry_date=$(echo $expiry_info | cut -d ',' -f 2)
+    echo "Remaining days: $remaining_days"
+    echo "Expiry Date: $expiry_date"
+
     if [ $remaining_days -le 30 ]; then
-        # Send alert to Slack
-        curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"SSL Expiry Alert\n* Domain: $domain\n* Warning: The SSL certificate for $domain will expire in $remaining_days days.\"}" $SLACK_WEBHOOK_URL
+        echo "Sending alert to Slack for domain $domain"
+        curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"SSL Expiry Alert\n* Domain: $domain\n* Warning: The SSL certificate for $domain will expire in $remaining_days days on $expiry_date.\"}" $SLACK_WEBHOOK_URL
     fi
 done
