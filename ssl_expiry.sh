@@ -20,7 +20,7 @@ do
     echo "Remaining days: $remaining_days"
     echo "Expiry Date: $expiry_date"
 
-    if [ $remaining_days -le 30 ]; then
+    if [ $remaining_days -le 80 ]; then
         echo "Sending alert to Slack for domain $domain"
         curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"SSL Expiry Alert\n* Domain: $domain\n* Warning: The SSL certificate for $domain will expire in $remaining_days days on $expiry_date.\"}" $SLACK_WEBHOOK_URL
     fi
